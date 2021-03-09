@@ -1,0 +1,26 @@
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: cd-jenkins-managed-certificate
+spec:
+  domains:
+    - jenkins.tu-dominio.com
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cd-jenkins-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: cd-jenkins-ip
+    networking.gke.io/managed-certificates: cd-jenkins-managed-certificate
+spec:
+  rules:
+  - host: jenkins.tu-dominio.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: cd-jenkins
+            port:
+              number: 8080
+        pathType: ImplementationSpecific

@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+ name: pv-fileserver-jenkins
+spec:
+ capacity:
+   storage: 1T
+ accessModes:
+ - ReadWriteMany
+ nfs:
+   path: /jenkins_home
+   server: 10.85.134.66
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: pvc-fileserver-jenkins
+spec:
+ accessModes:
+ - ReadWriteMany
+ storageClassName: ""
+ volumeName: pv-fileserver-jenkins
+ resources:
+   requests:
+     storage: 1T
+---
+apiVersion: v1
+kind: Pod
+metadata:
+ name: fileserver-pod
+spec:
+ containers:
+ - name: bash
+   image: gcr.io/google-containers/alpine-with-bash:1.0
+   command: ["/bin/bash"]
+   args: ["-c", "while true; do sleep 10; done"]
+   volumeMounts:
+   - mountPath: /mnt/filestore
+     name: fileserver-volumen
+ volumes:
+ - name: fileserver-volumen
+   persistentVolumeClaim:
+     claimName: pvc-fileserver-jenkins
+     readOnly: false
