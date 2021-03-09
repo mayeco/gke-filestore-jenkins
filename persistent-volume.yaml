@@ -9,7 +9,7 @@ spec:
  - ReadWriteMany
  nfs:
    path: /jenkins_home
-   server: 10.85.134.66
+   server: 10.10.10.10
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
